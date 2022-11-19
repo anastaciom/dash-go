@@ -1,13 +1,23 @@
-import { FormControl, FormLabel, Input, InputProps } from "@chakra-ui/react";
-import React from "react";
-
+import {
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  InputProps,
+} from "@chakra-ui/react";
+import React, { forwardRef, ForwardRefRenderFunction } from "react";
+import { FieldError } from "react-hook-form";
 interface InputCustomProps extends InputProps {
   label?: string;
+  error?: FieldError;
 }
 
-export default function InputCustom({ label, ...rest }: InputCustomProps) {
+const InputBase: ForwardRefRenderFunction<
+  HTMLInputElement,
+  InputCustomProps
+> = ({ label, error = null, ...rest }, ref) => {
   return (
-    <FormControl>
+    <FormControl isInvalid={!!error}>
       {!!label && <FormLabel htmlFor={rest?.name}>{label}</FormLabel>}
       <Input
         focusBorderColor="pink.500"
@@ -15,8 +25,12 @@ export default function InputCustom({ label, ...rest }: InputCustomProps) {
         variant="filled"
         _hover={{ bgColor: "gray.900" }}
         size="lg"
+        ref={ref}
         {...rest}
       />
+      {!!error && <FormErrorMessage>{error.message}</FormErrorMessage>}
     </FormControl>
   );
-}
+};
+
+export const InputCustom = forwardRef(InputBase);
